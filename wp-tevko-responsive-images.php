@@ -319,6 +319,19 @@ function tevkori_extend_image_tag( $html, $id, $caption, $title, $align, $url, $
 		// Build the data-sizes attribute if sizes were returned.
 		$sizes = tevkori_get_sizes( $id, $size );
 		$sizes = $sizes ? 'data-sizes="' . $sizes . '"' : '';
+		
+		/*** BEGIN ODDI Custom: we want to always use the 300 src ***/
+		$newImgSrc="";
+		$tempSources = tevkori_get_srcset_array( $id, 'medium' );
+		foreach( $tempSources as $key => $tempSource ) {
+			if ( strpos( $tempSource, '300w' ) ) {
+				$newImgSrc=str_replace(' 300w','',$tempSource);
+			}
+		}
+		if ($newImgSrc != "") {
+			$html = preg_replace( '/(src\s*=\s*"(.+?)")/', 'src="' . $newImgSrc . '"', $html );	
+		}
+		/*** END ODDI Custom ***/
 
 		$html = preg_replace( '/(src\s*=\s*"(.+?)")/', '$1 ' . $sizes . ' ' . $srcset, $html );
 	}
